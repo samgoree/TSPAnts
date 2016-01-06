@@ -1,4 +1,5 @@
 # Graph.py
+# Sam Goree
 # Contains relevant classes for graph implementation
 
 import sys
@@ -34,6 +35,7 @@ class Edge:
 	name = -1
 	length = 0
 	popularity = 1 # a weight for how likely an ant is to choose this edge
+	popularityCache = 1 # used to reset after we're done with local pheromone updating for each iteration before we do global pheromone updating
 	
 	def __init__(self, name, endpoints, length):
 		if len(endpoints) != 2:
@@ -65,15 +67,29 @@ class Graph:
 	def __str__(self):
 		return "Nodes: " + str(self.nodes) + "\nEdges: " + str(self.edges)
 	
-	def edgeLength(self, u, v):
+	# everything below is used for getting in between edge/node numbers and their actual objects at various points in antColonyOpt
+	def getEdge(self, u, v):
 		for e in self.edges:
 			if self.nodes[u] in e.nodes and self.nodes[v] in e.nodes:
-				return e.length
+				return e
 			elif u in e.nodes and v in e.nodes:
-				return e.length
+				return e
+		return None
+		
+	def getEdgeNumber(self, u, v):
+		for i in range(len(self.edges)):
+			if self.nodes[u] in self.edges[i].nodes and self.nodes[v] in self.edges[i].nodes:
+				return i
+			elif u in self.edges[i].nodes and v in self.edges[i].nodes:
+				return i
+				
+	def getEdgeNumber(self, e):
+		for i in range(len(self.edges)):
+			if e == self.edges[i]: return i
 		return -1
 	
-	
+	def edgeLength(self, u, v):
+		return self.getEdge(u, v).length
 	
 	
 	
